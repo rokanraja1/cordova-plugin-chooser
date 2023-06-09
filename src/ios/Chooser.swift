@@ -51,6 +51,12 @@ class Chooser : CDVPlugin {
 			}
 
 			do {
+				let resources = try url.resourceValues(forKeys:[.fileSizeKey])
+                let fileSize = resources.fileSize!
+                if(fileSize >= 52428800){
+                  	self.send("File_size_too_big")
+                  	return
+                }
 				let result = [
 					"data": includeData ? data.base64EncodedString() : "",
 					"mediaType": self.detectMimeType(newURL),

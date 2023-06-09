@@ -28,8 +28,9 @@ public class Chooser extends CordovaPlugin {
 
 	/** @see https://stackoverflow.com/a/17861016/459881 */
 	public static byte[] getBytesFromInputStream (InputStream is) throws IOException {
+		final int MAXREAD = 131072 * 100;
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		byte[] buffer = new byte[0xFFFF];
+		byte[] buffer = new byte[MAXREAD];
 
 		for (int len = is.read(buffer); len != -1; len = is.read(buffer)) {
 			os.write(buffer, 0, len);
@@ -110,6 +111,12 @@ public class Chooser extends CordovaPlugin {
 						ContentResolver contentResolver =
 							this.cordova.getActivity().getContentResolver()
 						;
+						InputStream inputStream = contentResolver.openInputStream(uri);
+                        int size = inputStream.available();
+                        if (size >= 52428800) {
+                            this.callback.success("File_size_too_big");
+                        	return;
+                        }
 
 						String name = Chooser.getDisplayName(contentResolver, uri);
 
