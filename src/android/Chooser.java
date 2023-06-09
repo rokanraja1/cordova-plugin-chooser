@@ -19,6 +19,7 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.io.InputStream;
 
 
 public class Chooser extends CordovaPlugin {
@@ -110,6 +111,12 @@ public class Chooser extends CordovaPlugin {
 						ContentResolver contentResolver =
 							this.cordova.getActivity().getContentResolver()
 						;
+						InputStream inputStream = contentResolver.openInputStream(uri);
+                        int size = inputStream.available();
+                        if (size >= 52428800) {
+                            this.callback.error("File_size_too_big");
+                        	return;
+                        }
 
 						String name = Chooser.getDisplayName(contentResolver, uri);
 
